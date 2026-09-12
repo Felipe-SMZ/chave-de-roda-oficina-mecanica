@@ -6,6 +6,7 @@ import ClienteListScreen from "../screens/clientes/ClienteListScreen";
 import ClienteEditScreen from "../screens/clientes/ClienteEditScreen";
 import VeiculoFormScreen from "../screens/veiculos/VeiculoFormScreen";
 import VeiculoListScreen from "../screens/veiculos/VeiculoListScreen";
+import VeiculoEditScreen from "../screens/veiculos/VeiculoEditScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function AppNavigator() {
 
                 <Stack.Screen name="VeiculoForm" component={VeiculoFormScreen} options={{ title: "Cadastrar Veículo" }} />
                 <Stack.Screen name="VeiculoList" component={VeiculoListScreen} options={{ title: "Veículos" }} />
+                <Stack.Screen name="VeiculoEdit" component={VeiculoEditScreen} options={{ title: "Editar Veículo" }} />
             </Stack.Navigator>
         </NavigationContainer>
     );
