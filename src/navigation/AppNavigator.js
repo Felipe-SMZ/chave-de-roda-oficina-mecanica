@@ -14,7 +14,7 @@ export default function AppNavigator() {
                 <Stack.Screen name="Menu" component={MenuScreen} />
                 <Stack.Screen name="ClienteForm" component={ClienteFormScreen} options={{ title: "Cadastrar Cliente" }} />
                 <Stack.Screen name="ClienteList" component={ClienteListScreen} options={{ title: "Clientes" }} />
-                <Stack.Screen name="ClientEdit" component={ClienteEditScreen} options={{ title: "Editar Cliente" }} />
+                <Stack.Screen name="ClienteEdit" component={ClienteEditScreen} options={{ title: "Editar Cliente" }} />
             </Stack.Navigator>
         </NavigationContainer>
     );
