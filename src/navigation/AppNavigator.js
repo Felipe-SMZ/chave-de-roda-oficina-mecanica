@@ -1,0 +1,21 @@
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import MenuScreen from "../screens/MenuScreen";
+import ClienteFormScreen from "../screens/clientes/ClienteFormScreen";
+import ClienteListScreen from "../screens/clientes/ClienteListScreen";
+import ClienteEditScreen from "../screens/clientes/ClienteEditScreen";
+
+const Stack = createNativeStackNavigator();
+
+export default function AppNavigator() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Menu">
+                <Stack.Screen name="Menu" component={MenuScreen} />
+                <Stack.Screen name="ClienteForm" component={ClienteFormScreen} options={{ title: "Cadastrar Cliente" }} />
+                <Stack.Screen name="ClienteList" component={ClienteListScreen} options={{ title: "Clientes" }} />
+                <Stack.Screen name="ClientEdit" component={ClienteEditScreen} options={{ title: "Editar Cliente" }} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+}
