@@ -21,3 +21,9 @@ export function emailValido(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
 }
+
+export function paraNumeroDecimal(texto) {
+    const normalizado = texto.replace(",", ".");
+    const numero = parseFloat(normalizado);
+    return isNaN(numero) ? 0 : numero;
+}
