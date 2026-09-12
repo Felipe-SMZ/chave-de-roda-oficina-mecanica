@@ -1,42 +1,89 @@
-import { useEffect, useState } from "react";
-import { View, FlatList, Text, Button } from "react-native";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../services/firebaseConfig";
+import { useCallback, useState } from "react";
+import { View, FlatList, Text, Button, StyleSheet } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { carregarClientes, excluirCliente } from "../../services/clienteService";
 
 export default function ClienteListScreen({ navigation }) {
     const [clientes, setClientes] = useState([]);
 
-    async function carregarClientes() {
-        const snapshot = await getDocs(collection(db, "clientes"));
-        const lista = snapshot.docs.map((documento) => ({
-            id: documento.id,
-            ...documento.data(),
-        }));
+    async function atualizarLista() {
+        const lista = await carregarClientes();
         setClientes(lista);
     }
 
-    useEffect(() => {
-        carregarClientes();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            atualizarLista();
+        }, [])
+    );
 
-    async function excluirCliente(id) {
-        await deleteDoc(doc(db, "clientes", id));
-        carregarClientes(); 
+    async function handleExcluir(id) {
+        await excluirCliente(id);
+        atualizarLista();
     }
 
     return (
-        <View style={{ padding: 20 }}>
+        <View style={styles.container}>
             <FlatList
                 data={clientes}
                 keyExtractor={(item) => item.id}
+                contentContainerStyle={{ gap: 12 }}
+                ListEmptyComponent={<Text style={styles.vazio}>Nenhum cliente cadastrado.</Text>}
                 renderItem={({ item }) => (
-                    <View style={{ marginBottom: 12, borderBottomWidth: 1, paddingBottom: 8 }}>
-                        <Text>{item.nome} — {item.telefone}</Text>
-                        <Button title="Editar" onPress={() => navigation.navigate("ClienteEdit", { cliente: item })} />
-                        <Button title="Excluir" color="red" onPress={() => excluirCliente(item.id)} />
+                    <View style={styles.card}>
+                        <Text style={styles.nome}>{item.nome}</Text>
+                        <Text style={styles.detalhe}>{item.telefone} · {item.email}</Text>
+                        <View style={styles.acoes}>
+                            <View style={styles.botaoWrapper}>
+                                <Button title="Editar" onPress={() => navigation.navigate("ClienteEdit", { cliente: item })} />
+                            </View>
+                            <View style={styles.botaoWrapper}>
+                                <Button title="Excluir" color="#d11a2a" onPress={() => handleExcluir(item.id)} />
+                            </View>
+                        </View>
                     </View>
                 )}
             />
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: "#f2f2f2",
+    },
+    card: {
+        backgroundColor: "#fff",
+        borderRadius: 8,
+        padding: 14,
+        shadowColor: "#000",
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+        elevation: 2,
+    },
+    nome: {
+        fontSize: 16,
+        fontWeight: "600",
+        marginBottom: 4,
+    },
+    detalhe: {
+        fontSize: 13,
+        color: "#666",
+        marginBottom: 10,
+    },
+    acoes: {
+        flexDirection: "row",
+        gap: 8,
+    },
+    botaoWrapper: {
+        flex: 1,
+    },
+    vazio: {
+        textAlign: "center",
+        color: "#999",
+        marginTop: 40,
+    },
+});

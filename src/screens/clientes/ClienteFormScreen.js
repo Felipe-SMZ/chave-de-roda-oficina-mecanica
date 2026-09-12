@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { View, TextInput, Button, Alert } from "react-native";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../../services/firebaseConfig";
+import { criarCliente } from "../../services/clienteService";
 
 export default function ClienteFormScreen({ navigation }) {
     const [nome, setNome] = useState("");
@@ -10,7 +9,7 @@ export default function ClienteFormScreen({ navigation }) {
 
     async function salvarCliente() {
         try {
-            await addDoc(collection(db, "clientes"), {
+            await criarCliente({
                 nome,
                 telefone,
                 email,

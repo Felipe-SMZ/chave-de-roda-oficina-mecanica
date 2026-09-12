@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { View, TextInput, Button, Alert } from "react-native";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../services/firebaseConfig";
+import { atualizarCliente } from "../../services/clienteService";
 
 export default function ClienteEditScreen({ route, navigation }) {
     const { cliente } = route.params; // dado recebido da tela de listagem
@@ -11,7 +10,11 @@ export default function ClienteEditScreen({ route, navigation }) {
 
     async function salvarEdicao() {
         try {
-            await updateDoc(doc(db, "clientes", cliente.id), { nome, telefone, email });
+            await atualizarCliente(cliente.id, {
+                nome,
+                telefone,
+                email,
+            });
             Alert.alert("Sucesso", "Cliente atualizado!");
             navigation.goBack();
         } catch (erro) {
