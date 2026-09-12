@@ -16,6 +16,12 @@ export default function MenuScreen({ navigation }) {
             <Button title="Cadastrar Veículos" onPress={() =>
                 navigation.navigate("VeiculoForm")
             } />
+            <Button title="Funcionários" onPress={() =>
+                navigation.navigate("FuncionarioList")
+            } />
+            <Button title="Cadastrar Funcionários" onPress={() =>
+                navigation.navigate("FuncionarioForm")
+            } />
             {/* repita para Veículos, Funcionários, Serviços, Ordens de Serviço */}
         </View>
     );
