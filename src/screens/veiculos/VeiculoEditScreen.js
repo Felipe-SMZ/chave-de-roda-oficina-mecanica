@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, TextInput, Button, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { atualizarVeiculo } from "../../services/veiculoService";
 import { carregarClientes } from "../../services/clienteService";
+import { formatarPlaca, capitalizarNome } from "../../utils/formatters";
+import { estilosBase } from "../../styles/theme";
 
 export default function VeiculoEditScreen({ route, navigation }) {
     const { veiculo } = route.params;
@@ -21,10 +23,10 @@ export default function VeiculoEditScreen({ route, navigation }) {
     async function salvarEdicao() {
         try {
             await atualizarVeiculo(veiculo.id, {
-                modelo,
-                placa,
+                modelo: capitalizarNome(modelo),
+                placa: formatarPlaca(placa),
                 ano: Number(ano),
-                marca,
+                marca: capitalizarNome(marca),
                 clientes_REF: clienteId,
             });
             Alert.alert("Sucesso", "Veículo atualizado!");
@@ -35,17 +37,47 @@ export default function VeiculoEditScreen({ route, navigation }) {
     }
 
     return (
-        <View style={{ padding: 20, gap: 10 }}>
-            <TextInput value={modelo} onChangeText={setModelo} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput value={placa} onChangeText={setPlaca} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput value={ano} onChangeText={setAno} style={{ borderWidth: 1, padding: 8 }} keyboardType="numeric" />
-            <TextInput value={marca} onChangeText={setMarca} style={{ borderWidth: 1, padding: 8 }} />
-            <Picker selectedValue={clienteId} onValueChange={setClienteId}>
-                {clientes.map((cliente) => (
-                    <Picker.Item key={cliente.id} label={cliente.nome} value={cliente.id} />
-                ))}
-            </Picker>
-            <Button title="Salvar alterações" onPress={salvarEdicao} />
-        </View>
+        <ScrollView style={estilosBase.container} contentContainerStyle={estilosBase.conteudo}>
+            <View style={estilosBase.conteudoCentralizado}>
+                <View>
+                    <Text style={estilosBase.label}>Modelo</Text>
+                    <TextInput value={modelo} onChangeText={setModelo} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Placa</Text>
+                    <TextInput
+                        value={placa}
+                        onChangeText={(texto) => setPlaca(formatarPlaca(texto))}
+                        style={estilosBase.input}
+                    />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Ano</Text>
+                    <TextInput value={ano} onChangeText={setAno} keyboardType="numeric" style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Marca</Text>
+                    <TextInput value={marca} onChangeText={setMarca} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Cliente</Text>
+                    <View style={estilosBase.pickerWrapper}>
+                        <Picker selectedValue={clienteId} onValueChange={setClienteId} style={estilosBase.picker}>
+                            {clientes.map((cliente) => (
+                                <Picker.Item key={cliente.id} label={cliente.nome} value={cliente.id} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>
+
+                <TouchableOpacity style={estilosBase.botaoPreenchido} onPress={salvarEdicao}>
+                    <Text style={estilosBase.textoBotaoPreenchido}>Salvar alterações</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 }

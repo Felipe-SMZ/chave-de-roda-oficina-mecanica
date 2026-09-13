@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { View, TextInput, Button, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { criarFuncionario } from "../../services/funcionarioService";
 import { capitalizarNome, formatarTelefone } from "../../utils/formatters";
+import { estilosBase } from "../../styles/theme";
 
 export default function FuncionarioFormScreen({ navigation }) {
     const [nome, setNome] = useState("");
@@ -30,22 +31,42 @@ export default function FuncionarioFormScreen({ navigation }) {
     }
 
     return (
-        <View style={{ padding: 20, gap: 10 }}>
-            <TextInput placeholder="Nome" value={nome} onChangeText={setNome} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput placeholder="Cargo" value={cargo} onChangeText={setCargo} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput
-                placeholder="Telefone"
-                value={telefone}
-                onChangeText={(texto) => setTelefone(formatarTelefone(texto))}
-                keyboardType="numeric"
-                style={{ borderWidth: 1, padding: 8 }}
-            />
-            <TextInput placeholder="Data de Admissão (DD/MM/AAAA)"
-                value={dataAdmissao}
-                onChangeText={setDataAdmissao}
-                style={{ borderWidth: 1, padding: 8 }}
-                keyboardType="numeric" />
-            <Button title="Salvar" onPress={salvarFuncionario} />
-        </View>
+        <ScrollView style={estilosBase.container} contentContainerStyle={estilosBase.conteudo}>
+            <View style={estilosBase.conteudoCentralizado}>
+                <View>
+                    <Text style={estilosBase.label}>Nome</Text>
+                    <TextInput value={nome} onChangeText={setNome} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Cargo</Text>
+                    <TextInput value={cargo} onChangeText={setCargo} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Telefone</Text>
+                    <TextInput
+                        value={telefone}
+                        onChangeText={(texto) => setTelefone(formatarTelefone(texto))}
+                        keyboardType="numeric"
+                        style={estilosBase.input}
+                    />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Data de Admissão (DD/MM/AAAA)</Text>
+                    <TextInput
+                        value={dataAdmissao}
+                        onChangeText={setDataAdmissao}
+                        keyboardType="numeric"
+                        style={estilosBase.input}
+                    />
+                </View>
+
+                <TouchableOpacity style={estilosBase.botaoPreenchido} onPress={salvarFuncionario}>
+                    <Text style={estilosBase.textoBotaoPreenchido}>Salvar</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 }

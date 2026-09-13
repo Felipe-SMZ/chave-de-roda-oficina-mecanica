@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { View, TextInput, Button, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { atualizarOrdemServico } from "../../services/ordemServicoService";
 import { carregarFuncionarios } from "../../services/funcionarioService";
 import { carregarServicos } from "../../services/servicoService";
 import { carregarVeiculos } from "../../services/veiculoService";
 import { paraNumeroDecimal } from "../../utils/formatters";
+import { estilosBase } from "../../styles/theme";
 
 export default function OrdemServicoEditScreen({ route, navigation }) {
     const { ordem } = route.params;
@@ -44,30 +45,65 @@ export default function OrdemServicoEditScreen({ route, navigation }) {
     }
 
     return (
-        <View style={{ padding: 20, gap: 10 }}>
-            <Picker selectedValue={veiculoId} onValueChange={setVeiculoId}>
-                <Picker.Item label="Selecione um veículo" value="" />
-                {veiculos.map((veiculo) => (
-                    <Picker.Item key={veiculo.id} label={veiculo.modelo} value={veiculo.id} />
-                ))}
-            </Picker>
-            <Picker selectedValue={servicoId} onValueChange={setServicoId}>
-                <Picker.Item label="Selecione um serviço" value="" />
-                {servicos.map((servico) => (
-                    <Picker.Item key={servico.id} label={servico.descricao} value={servico.id} />
-                ))}
-            </Picker>
-            <Picker selectedValue={funcionarioId} onValueChange={setFuncionarioId}>
-                <Picker.Item label="Selecione um funcionário" value="" />
-                {funcionarios.map((funcionario) => (
-                    <Picker.Item key={funcionario.id} label={funcionario.nome} value={funcionario.id} />
-                ))}
-            </Picker>
-            <TextInput placeholder="Data" value={data} onChangeText={setData} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput placeholder="Status" value={status} onChangeText={setStatus} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput placeholder="Valor Total" value={valorTotal} onChangeText={setValor} keyboardType="numeric" style={{ borderWidth: 1, padding: 8 }} />
+        <ScrollView style={estilosBase.container} contentContainerStyle={estilosBase.conteudo}>
+            <View style={estilosBase.conteudoCentralizado}>
+                <View>
+                    <Text style={estilosBase.label}>Veículo</Text>
+                    <View style={estilosBase.pickerWrapper}>
+                        <Picker selectedValue={veiculoId} onValueChange={setVeiculoId} style={estilosBase.picker}>
+                            {veiculos.map((veiculo) => (
+                                <Picker.Item key={veiculo.id} label={`${veiculo.modelo} - ${veiculo.placa}`} value={veiculo.id} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>
 
-            <Button title="Salvar" onPress={salvarEdicao} />
-        </View>
+                <View>
+                    <Text style={estilosBase.label}>Serviço</Text>
+                    <View style={estilosBase.pickerWrapper}>
+                        <Picker selectedValue={servicoId} onValueChange={setServicoId} style={estilosBase.picker}>
+                            {servicos.map((servico) => (
+                                <Picker.Item key={servico.id} label={servico.descricao} value={servico.id} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Funcionário</Text>
+                    <View style={estilosBase.pickerWrapper}>
+                        <Picker selectedValue={funcionarioId} onValueChange={setFuncionarioId} style={estilosBase.picker}>
+                            {funcionarios.map((funcionario) => (
+                                <Picker.Item key={funcionario.id} label={funcionario.nome} value={funcionario.id} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Data</Text>
+                    <TextInput value={data} onChangeText={setData} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Status</Text>
+                    <TextInput value={status} onChangeText={setStatus} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Valor Total</Text>
+                    <TextInput
+                        value={valorTotal}
+                        onChangeText={setValor}
+                        keyboardType="decimal-pad"
+                        style={estilosBase.input}
+                    />
+                </View>
+
+                <TouchableOpacity style={estilosBase.botaoPreenchido} onPress={salvarEdicao}>
+                    <Text style={estilosBase.textoBotaoPreenchido}>Salvar alterações</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 }

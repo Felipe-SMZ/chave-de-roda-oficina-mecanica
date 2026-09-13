@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, TextInput, Button, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { criarVeiculo } from "../../services/veiculoService";
 import { carregarClientes } from "../../services/clienteService";
+import { formatarPlaca, capitalizarNome } from "../../utils/formatters";
+import { estilosBase } from "../../styles/theme";
 
 export default function VeiculoFormScreen({ navigation }) {
     const [modelo, setModelo] = useState("");
@@ -24,10 +26,10 @@ export default function VeiculoFormScreen({ navigation }) {
 
         try {
             await criarVeiculo({
-                modelo,
-                placa,
+                modelo: capitalizarNome(modelo),
+                placa: formatarPlaca(placa),
                 ano: Number(ano),
-                marca,
+                marca: capitalizarNome(marca),
                 clientes_REF: clienteId,
             });
             Alert.alert("Sucesso", "Veículo cadastrado com sucesso.");
@@ -38,18 +40,48 @@ export default function VeiculoFormScreen({ navigation }) {
     }
 
     return (
-        <View style={{ padding: 20, gap: 10 }}>
-            <TextInput placeholder="Modelo" value={modelo} onChangeText={setModelo} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput placeholder="Placa" value={placa} onChangeText={setPlaca} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput placeholder="Ano" value={ano} onChangeText={setAno} style={{ borderWidth: 1, padding: 8 }} />
-            <TextInput placeholder="Marca" value={marca} onChangeText={setMarca} style={{ borderWidth: 1, padding: 8 }} />
-            <Picker selectedValue={clienteId} onValueChange={setClienteId}>
-                <Picker.Item label="Selecione um cliente" value="" />
-                {clientes.map((cliente) => (
-                    <Picker.Item key={cliente.id} label={cliente.nome} value={cliente.id} />
-                ))}
-            </Picker>
-            <Button title="Salvar" onPress={salvarVeiculo} />
-        </View>
+        <ScrollView style={estilosBase.container} contentContainerStyle={estilosBase.conteudo}>
+            <View style={estilosBase.conteudoCentralizado}>
+                <View>
+                    <Text style={estilosBase.label}>Modelo</Text>
+                    <TextInput value={modelo} onChangeText={setModelo} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Placa</Text>
+                    <TextInput
+                        value={placa}
+                        onChangeText={(texto) => setPlaca(formatarPlaca(texto))}
+                        style={estilosBase.input}
+                    />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Ano</Text>
+                    <TextInput value={ano} onChangeText={setAno} keyboardType="numeric" style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Marca</Text>
+                    <TextInput value={marca} onChangeText={setMarca} style={estilosBase.input} />
+                </View>
+
+                <View>
+                    <Text style={estilosBase.label}>Cliente</Text>
+                    <View style={estilosBase.pickerWrapper}>
+                        <Picker selectedValue={clienteId} onValueChange={setClienteId} style={estilosBase.picker}>
+                            <Picker.Item label="Selecione um cliente" value="" />
+                            {clientes.map((cliente) => (
+                                <Picker.Item key={cliente.id} label={cliente.nome} value={cliente.id} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>
+
+                <TouchableOpacity style={estilosBase.botaoPreenchido} onPress={salvarVeiculo}>
+                    <Text style={estilosBase.textoBotaoPreenchido}>Salvar</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 }

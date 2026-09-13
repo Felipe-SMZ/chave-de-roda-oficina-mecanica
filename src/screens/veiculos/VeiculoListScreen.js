@@ -1,11 +1,29 @@
 import { useCallback, useState } from "react";
-import { View, FlatList, Text, Button, StyleSheet } from "react-native";
+import { View, Text, FlatList, useWindowDimensions } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { carregarVeiculos, excluirVeiculo } from "../../services/veiculoService";
 import { carregarClientes } from "../../services/clienteService";
+import { estilosBase } from "../../styles/theme";
+import InfoCard from "../../components/InfoCard";
+
+const LARGURA_CARD_REFERENCIA = 340;
+const MAX_COLUNAS = 4;
+const LARGURA_MAXIMA_GRID = 1440;
+const ESPACAMENTO = 16;
+const PADDING_LATERAL = 20;
 
 export default function VeiculoListScreen({ navigation }) {
     const [veiculos, setVeiculos] = useState([]);
+    const { width } = useWindowDimensions();
+
+    const larguraUtil = Math.min(width, LARGURA_MAXIMA_GRID);
+    const numColunas = Math.min(
+        MAX_COLUNAS,
+        Math.max(1, Math.floor(larguraUtil / LARGURA_CARD_REFERENCIA))
+    );
+
+    const larguraConteudo = larguraUtil - PADDING_LATERAL * 2;
+    const larguraCard = (larguraConteudo - ESPACAMENTO * (numColunas - 1)) / numColunas;
 
     async function atualizarLista() {
         const [listaVeiculos, listaClientes] = await Promise.all([
@@ -23,6 +41,7 @@ export default function VeiculoListScreen({ navigation }) {
 
         setVeiculos(veiculosComDono);
     }
+
     useFocusEffect(
         useCallback(() => {
             atualizarLista();
@@ -35,68 +54,40 @@ export default function VeiculoListScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <FlatList
-                data={veiculos}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{ gap: 12 }}
-                ListEmptyComponent={<Text style={styles.vazio}>Nenhum veículo cadastrado.</Text>}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Text style={styles.nome}>{item.modelo}</Text>
-                        <Text style={styles.detalhe}>Placa: {item.placa}  |  Ano: {item.ano}  |  Marca: {item.marca} </Text>
-                        <Text style={styles.detalhe}>Proprietário: {item.nomeCliente}</Text>
-                        <View style={styles.acoes}>
-                            <View style={styles.botaoWrapper}>
-                                <Button title="Editar" onPress={() => navigation.navigate("VeiculoEdit", { veiculo: item })} />
-                            </View>
-                            <View style={styles.botaoWrapper}>
-                                <Button title="Excluir" color="#d11a2a" onPress={() => handleExcluir(item.id)} />
-                            </View>
-                        </View>
-                    </View>
-                )}
-            />
+        <View style={estilosBase.container}>
+            <View style={{ width: "100%", maxWidth: LARGURA_MAXIMA_GRID, alignSelf: "center", flex: 1 }}>
+                <View style={estilosBase.cabecalhoLista}>
+                    <Text style={estilosBase.cabecalhoTitulo}>Veículos</Text>
+                    <Text style={estilosBase.cabecalhoContagem}>
+                        {veiculos.length} {veiculos.length === 1 ? "cadastrado" : "cadastrados"}
+                    </Text>
+                </View>
+
+                <FlatList
+                    key={numColunas}
+                    data={veiculos}
+                    keyExtractor={(item) => item.id}
+                    numColumns={numColunas}
+                    columnWrapperStyle={numColunas > 1 ? { gap: ESPACAMENTO } : undefined}
+                    contentContainerStyle={{ padding: PADDING_LATERAL, gap: ESPACAMENTO }}
+                    ListEmptyComponent={<Text style={estilosBase.listaVazia}>Nenhum veículo cadastrado.</Text>}
+                    renderItem={({ item }) => (
+                        <InfoCard
+                            titulo={`${item.modelo} - ${item.placa}`}
+                            width={larguraCard}
+                            infoRows={[
+                                { label: "Ano", value: String(item.ano) },
+                                { label: "Marca", value: item.marca },
+                                { label: "Proprietário", value: item.nomeCliente },
+                            ]}
+                            acoes={[
+                                { label: "Editar", onPress: () => navigation.navigate("VeiculoEdit", { veiculo: item }) },
+                                { label: "Excluir", variante: "perigo", onPress: () => handleExcluir(item.id) },
+                            ]}
+                        />
+                    )}
+                />
+            </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-        backgroundColor: "#f2f2f2",
-    },
-    card: {
-        backgroundColor: "#fff",
-        borderRadius: 8,
-        padding: 14,
-        shadowColor: "#000",
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
-        elevation: 2,
-    },
-    nome: {
-        fontSize: 16,
-        fontWeight: "600",
-        marginBottom: 4,
-    },
-    detalhe: {
-        fontSize: 13,
-        color: "#666",
-        marginBottom: 10,
-    },
-    acoes: {
-        flexDirection: "row",
-        gap: 8,
-    },
-    botaoWrapper: {
-        flex: 1,
-    },
-    vazio: {
-        textAlign: "center",
-        color: "#999",
-        marginTop: 40,
-    },
-});
