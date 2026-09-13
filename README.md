@@ -41,7 +41,7 @@ Recursos adicionais:
 
 ## Modelagem do banco (NoSQL)
 
-O modelo de dados foi projetado previamente no [brModeloWeb](https://www.brmodeloweb.com/), representando as 5 collections e suas relações antes da implementação. O diagrama completo está disponível em [`docs/modelo-nosql.png`](./docs/modelo-nosql.png) *(ajuste o caminho conforme onde você salvar a imagem exportada)*.
+O modelo de dados foi projetado previamente no [brModeloWeb](https://www.brmodeloweb.com/), representando as 5 collections e suas relações antes da implementação. O diagrama completo está disponível em [`docs/modelo-nosql.png`](./docs/modelo-nosql.png) 
 
 Resumo da estrutura:
 
