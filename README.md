@@ -19,7 +19,7 @@ Para cada uma das 5 entidades abaixo, o app oferece cadastro, listagem, edição
 
 | Entidade | Descrição |
 |---|---|
-| **Clientes** | Cadastro de clientes da oficina (nome, telefone, email, CPF) |
+| **Clientes** | Cadastro de clientes da oficina (nome, telefone, email) |
 | **Veículos** | Veículos vinculados a um cliente (placa, modelo, marca, ano) |
 | **Funcionários** | Funcionários da oficina (nome, cargo, telefone, data de admissão) |
 | **Serviços** | Catálogo de serviços oferecidos (descrição, categoria, valor médio) |
